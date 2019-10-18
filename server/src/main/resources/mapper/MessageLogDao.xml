@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freework.user.dao.MessageLogDao">
+    <update id="updateStatus" parameterType="com.freework.user.entity.MessageLog">
+        UPDATE
+        tb_message_log
+        SET
+        status=#{status},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        message_id=#{messageId}
+    </update>
+
+    <insert id="insertMessageLog" parameterType="com.freework.user.entity.MessageLog">
+        INSERT INTO
+        tb_message_log(
+        tag,message_id, message,try_count, status, next_retry_time, create_time, last_edit_time
+        )VALUES (
+        #{tag},
+        #{messageId},
+        #{message},
+        #{tryCount},
+        #{status},
+        #{nextRetryTime},
+        #{createTime},
+        #{lastEditTime}
+        )
+    </insert>
+
+    <select id="queryMessageLogByNeedRetry" parameterType="STRING"
+            resultType="com.freework.user.entity.MessageLog">
+        SELECT
+        tag, message_id, message, try_count, status, next_retry_time, create_time, last_edit_time
+        FROM
+        tb_message_log
+        WHERE
+        tag=#{tag}
+        AND status='0'
+        AND next_retry_time <![CDATA[<=]]> sysdate();
+    </select>
+
+    <update id="updateRetry" parameterType="com.freework.user.entity.MessageLog">
+        UPDATE
+        tb_message_log
+        SET
+        try_count=#{tryCount},
+        next_retry_time=#{nextRetryTime},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        message_id=#{messageId}
+    </update>
+</mapper>

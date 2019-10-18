@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.freework.user.dao.UserDao">
+    <select id="login" resultType="com.freework.user.entity.User">
+        SELECT
+        user_id, user_name, status, email, phone, password, img, education, school, situation, create_time, last_edit_time
+        FROM
+        tb_user
+        WHERE
+        phone=#{phone} AND password=#{password}
+    </select>
+
+    <select id="query" resultType="com.freework.user.entity.User">
+        SELECT
+        user_id, user_name, status, email, phone, password, img, education, school, situation, create_time,
+        last_edit_time
+        FROM
+        tb_user
+        <where>
+            <if test="userId != null ">
+                AND user_id = #{userId}
+            </if>
+            <if test="status != null ">
+                AND status = #{status}
+            </if>
+            <if test="phone != null">
+                AND phone=#{phone}
+            </if>
+        </where>
+    </select>
+
+    <insert id="register" useGeneratedKeys="true" keyProperty="userId" keyColumn="userId">
+        INSERT INTO
+        tb_user(
+        user_name,
+        status,
+        email,
+        phone,
+        password,
+        situation,
+        create_time,
+        last_edit_time
+        ) VALUES (
+        #{userName},
+        #{status},
+        #{email},
+        #{phone},
+        #{password},
+        #{situation},
+        #{createTime},
+        #{lastEditTime}
+        )
+    </insert>
+
+    <select id="queryEmailOrPhoneExist" resultType="com.freework.user.entity.User"
+            parameterType="com.freework.user.entity.User">
+        SELECT
+        user_id
+        FROM
+        tb_user
+        <where>
+            <if test="email !=null">
+                AND email=#{email}
+            </if>
+            <if test="phone !=null">
+                AND phone=#{phone}
+            </if>
+        </where>
+    </select>
+
+    <update id="updatePassword" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        password = #{password},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        phone=#{phone}
+    </update>
+</mapper>
