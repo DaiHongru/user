@@ -8,6 +8,9 @@ import com.freework.common.loadon.result.enums.ResultStatusEnum;
 import com.freework.common.loadon.result.util.ResultUtil;
 import com.freework.common.loadon.util.DesUtil;
 import com.freework.common.loadon.util.JsonUtil;
+import com.freework.cvitae.client.feign.CvitaeClient;
+import com.freework.cvitae.client.vo.CvitaeVo;
+import com.freework.cvitae.client.vo.EnterpriseCvVo;
 import com.freework.user.dao.UserDao;
 import com.freework.user.entity.User;
 import com.freework.user.enums.UserStateEnum;
@@ -21,6 +24,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,6 +43,17 @@ public class UserServiceImpl implements UserService {
     private SmsService smsService;
     @Autowired
     private EmailService emailService;
+    @Autowired
+    private CvitaeClient cvitaeClient;
+
+    @Override
+    public ResultVo getCurrentUserInfo(String token) {
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        return ResultUtil.success(getCurrentUserVo(userKey));
+    }
 
     @Override
     public ResultVo utokenLogin(String token) {
@@ -73,6 +89,10 @@ public class UserServiceImpl implements UserService {
         }
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(u, userVo);
+        Map<String, Object> map = cvitaeClient.getUserCvitaeInfo(userVo.getUserId());
+        userVo.setCvitaeVoList((List<CvitaeVo>) map.get(CvitaeClient.CVITAE_VO_LIST_KEY));
+        userVo.setEnterpriseCvVoList((List<EnterpriseCvVo>) map.get(CvitaeClient.ENTERPRISE_CV_VO_LIST_KEY));
+        userVo.setPassCvitaeCount((Integer) map.get(CvitaeClient.PASS_CVITAE_COUNT_KEY));
         String token = UUID.randomUUID().toString();
         String userKey = UserRedisKey.LOGIN_KEY + token;
         String userStr = JsonUtil.objectToJson(userVo);

@@ -20,6 +20,14 @@ public interface UserService {
     String USER_EMAIL_ACTIVATION_CODE_KEY = "userEmailActivationCode";
 
     /**
+     * 获取当前登录的用户信息
+     *
+     * @param token
+     * @return
+     */
+    ResultVo getCurrentUserInfo(String token);
+
+    /**
      * utoken自动登录
      *
      * @param token

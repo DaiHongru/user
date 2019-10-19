@@ -4,12 +4,14 @@ package com.freework.user;
 import org.springframework.boot.SpringApplication;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.hystrix.dashboard.EnableHystrixDashboard;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 
 /**
  * @author daihongru
  */
 @ComponentScan(basePackages = "com.freework")
+@EnableFeignClients(basePackages = "com.freework.cvitae.client")
 @SpringCloudApplication
 @EnableHystrixDashboard
 public class UserApplication {

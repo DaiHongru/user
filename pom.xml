@@ -29,6 +29,7 @@
         <common-loadon.version>0.0.1-SNAPSHOT</common-loadon.version>
         <user-client.version>0.0.1-SNAPSHOT</user-client.version>
         <notify-client.version>0.0.1-SNAPSHOT</notify-client.version>
+        <cvitae-client.version>0.0.1-SNAPSHOT</cvitae-client.version>
     </properties>
 
     <dependencyManagement>
@@ -54,6 +55,11 @@
                 <groupId>com.freework</groupId>
                 <artifactId>notify-client</artifactId>
                 <version>${notify-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.freework</groupId>
+                <artifactId>cvitae-client</artifactId>
+                <version>${cvitae-client.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

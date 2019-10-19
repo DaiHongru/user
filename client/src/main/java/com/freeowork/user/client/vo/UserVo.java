@@ -1,8 +1,12 @@
 package com.freeowork.user.client.vo;
 
 
+import com.freework.cvitae.client.vo.CvitaeVo;
+import com.freework.cvitae.client.vo.EnterpriseCvVo;
+
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author daihongru
@@ -62,6 +66,31 @@ public class UserVo implements Serializable {
      * 创建时间
      */
     private Date createTime;
+
+    /**
+     * 简历
+     */
+    private List<CvitaeVo> cvitaeVoList;
+
+    /**
+     * 简历数量
+     */
+    private Integer cvitaeCount;
+
+    /**
+     * 简历投递情况
+     */
+    private List<EnterpriseCvVo> enterpriseCvVoList;
+
+    /**
+     * 投递的简历数量
+     */
+    private Integer deliveryCvitaeCount;
+
+    /**
+     * 投递的简历数量
+     */
+    private Integer passCvitaeCount;
 
     /**
      * 最近修改时间
@@ -162,5 +191,47 @@ public class UserVo implements Serializable {
 
     public void setLastEditTime(Date lastEditTime) {
         this.lastEditTime = lastEditTime;
+    }
+
+    public List<CvitaeVo> getCvitaeVoList() {
+        return cvitaeVoList;
+    }
+
+    public void setCvitaeVoList(List<CvitaeVo> cvitaeVoList) {
+        this.cvitaeCount = cvitaeVoList.size();
+        this.cvitaeVoList = cvitaeVoList;
+    }
+
+    public List<EnterpriseCvVo> getEnterpriseCvVoList() {
+        return enterpriseCvVoList;
+    }
+
+    public void setEnterpriseCvVoList(List<EnterpriseCvVo> enterpriseCvVoList) {
+        this.deliveryCvitaeCount = enterpriseCvVoList.size();
+        this.enterpriseCvVoList = enterpriseCvVoList;
+    }
+
+    public Integer getCvitaeCount() {
+        return cvitaeCount;
+    }
+
+    public void setCvitaeCount(Integer cvitaeCount) {
+        this.cvitaeCount = cvitaeCount;
+    }
+
+    public Integer getDeliveryCvitaeCount() {
+        return deliveryCvitaeCount;
+    }
+
+    public void setDeliveryCvitaeCount(Integer deliveryCvitaeCount) {
+        this.deliveryCvitaeCount = deliveryCvitaeCount;
+    }
+
+    public Integer getPassCvitaeCount() {
+        return passCvitaeCount;
+    }
+
+    public void setPassCvitaeCount(Integer passCvitaeCount) {
+        this.passCvitaeCount = passCvitaeCount;
     }
 }

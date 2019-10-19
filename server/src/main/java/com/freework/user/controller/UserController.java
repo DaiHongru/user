@@ -26,6 +26,17 @@ public class UserController {
     private EmailService emailService;
 
     /**
+     * 获取当前登录的用户信息
+     *
+     * @return
+     */
+    @GetMapping(value = "current/info")
+    public ResultVo getCurrentEnterpriseInfo(HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.getCurrentUserInfo(token);
+    }
+
+    /**
      * 通过token自动登录
      *
      * @param request
@@ -80,9 +91,9 @@ public class UserController {
      * @return
      */
     @PutMapping(value = "retrieve/password")
-    public ResultVo retrievePassword(@RequestBody User user,HttpServletRequest request) {
-        String evidence=request.getHeader("evidence");
-        return userService.retrievePassword(user,evidence);
+    public ResultVo retrievePassword(@RequestBody User user, HttpServletRequest request) {
+        String evidence = request.getHeader("evidence");
+        return userService.retrievePassword(user, evidence);
     }
 
     /**
