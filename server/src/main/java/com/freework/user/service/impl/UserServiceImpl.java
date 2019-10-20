@@ -7,22 +7,29 @@ import com.freework.common.loadon.result.entity.ResultVo;
 import com.freework.common.loadon.result.enums.ResultStatusEnum;
 import com.freework.common.loadon.result.util.ResultUtil;
 import com.freework.common.loadon.util.DesUtil;
+import com.freework.common.loadon.util.FileUtil;
 import com.freework.common.loadon.util.JsonUtil;
+import com.freework.common.loadon.util.PathUtil;
 import com.freework.cvitae.client.feign.CvitaeClient;
 import com.freework.cvitae.client.vo.CvitaeVo;
 import com.freework.cvitae.client.vo.EnterpriseCvVo;
 import com.freework.user.dao.UserDao;
+import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
 import com.freework.user.enums.UserStateEnum;
 import com.freework.user.exceptions.UserOperationException;
 import com.freework.user.service.EmailService;
 import com.freework.user.service.SmsService;
 import com.freework.user.service.UserService;
+import com.freework.user.util.ImageUtil;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -33,6 +40,7 @@ import java.util.UUID;
  */
 @Service
 public class UserServiceImpl implements UserService {
+    private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired(required = false)
     private UserDao userDao;
     @Autowired(required = false)
@@ -160,6 +168,47 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResultVo portraitUpload(ImageHolder imageHolder, String token) {
+        if (imageHolder == null) {
+            return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
+        }
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+        String timeStr = sdf.format(new Date());
+        String fileName = "userPortrait_" + timeStr + "_" + userVo.getUserId();
+        String extension = FileUtil.getFileExtension(imageHolder.getImageName());
+        String targetAddr = PathUtil.getUserPortraitPath(userVo.getUserId());
+        FileUtil.mkdirPath(targetAddr);
+        String path = targetAddr + fileName + extension;
+        ImageUtil.storageImage(path, imageHolder);
+        if (userVo.getImg() != null) {
+            StringBuffer buffer = new StringBuffer(userVo.getImg());
+            buffer.delete(0, 15);
+            FileUtil.deleteFileOrPath(buffer.toString());
+        }
+        userVo.setImg("/localresources" + path);
+        userVo.setLastEditTime(new Date());
+        User user = new User();
+        BeanUtils.copyProperties(userVo, user);
+        try {
+            int judgeNum = userDao.updateImg(user);
+            if (judgeNum <= 0) {
+                logger.error("上传头像时储存文件路径失败");
+                throw new UserOperationException("上传头像时储存文件路径失败");
+            }
+        } catch (Exception e) {
+            logger.error("上传头像时储存文件路径异常:" + e.getMessage());
+            throw new UserOperationException("上传头像时储存文件路径异常:" + e.getMessage());
+        }
+        setCurrentUserVo(userVo, userKey);
+        return ResultUtil.success();
+    }
+
+    @Override
     public ResultVo queryEmailOrPhoneExist(String email, String phone) {
         User user = new User();
         user.setPhone(phone);
@@ -195,7 +244,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 获取当前登录企业
+     * 获取当前登录用户
      *
      * @param key
      * @return
@@ -207,7 +256,7 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * 设置当前登录企业的信息
+     * 设置当前登录用户的信息
      *
      * @param userVo
      * @param key

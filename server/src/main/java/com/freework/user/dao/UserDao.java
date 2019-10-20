@@ -27,6 +27,7 @@ public interface UserDao {
 
     /**
      * 用户注册
+     *
      * @param user
      * @return
      */
@@ -42,7 +43,17 @@ public interface UserDao {
 
     /**
      * 修改用户密码
+     *
      * @param user
+     * @return
      */
     int updatePassword(User user);
+
+    /**
+     * 修改头像
+     *
+     * @param user
+     * @return
+     */
+    int updateImg(User user);
 }

@@ -79,4 +79,14 @@
         WHERE
         phone=#{phone}
     </update>
+
+    <update id="updateImg" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        img = #{img},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        user_id=#{userId}
+    </update>
 </mapper>

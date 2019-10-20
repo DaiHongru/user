@@ -4,14 +4,18 @@ import com.freework.common.loadon.result.entity.ResultVo;
 import com.freework.common.loadon.result.enums.ResultStatusEnum;
 import com.freework.common.loadon.result.util.ResultUtil;
 import com.freework.common.loadon.util.HttpServletRequestUtil;
+import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
 import com.freework.user.service.EmailService;
 import com.freework.user.service.SmsService;
 import com.freework.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @author daihongru
@@ -94,6 +98,19 @@ public class UserController {
     public ResultVo retrievePassword(@RequestBody User user, HttpServletRequest request) {
         String evidence = request.getHeader("evidence");
         return userService.retrievePassword(user, evidence);
+    }
+
+    /**
+     * 头像上传
+     *
+     * @return
+     */
+    @PostMapping(value = "current/portrait")
+    public ResultVo logoUpload(MultipartHttpServletRequest request) throws IOException {
+        MultipartFile portrait = request.getFile("portrait");
+        ImageHolder imageHolder = new ImageHolder(portrait.getOriginalFilename(), portrait.getInputStream());
+        String token = request.getHeader("utoken");
+        return userService.portraitUpload(imageHolder, token);
     }
 
     /**

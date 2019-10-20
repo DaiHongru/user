@@ -1,6 +1,7 @@
 package com.freework.user.service;
 
 import com.freework.common.loadon.result.entity.ResultVo;
+import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
 import org.springframework.stereotype.Service;
 
@@ -69,6 +70,15 @@ public interface UserService {
      * @return
      */
     ResultVo retrievePassword(User user, String evidence);
+
+    /**
+     * 头像上传
+     *
+     * @param imageHolder
+     * @param token
+     * @return
+     */
+    ResultVo portraitUpload(ImageHolder imageHolder, String token);
 
     /**
      * 查询邮箱或手机号码是否存在

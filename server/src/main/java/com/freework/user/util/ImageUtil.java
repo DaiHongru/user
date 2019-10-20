@@ -5,8 +5,6 @@ import com.freework.user.dto.ImageHolder;
 import net.coobird.thumbnailator.Thumbnails;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,7 +12,6 @@ import java.io.IOException;
 /**
  * @author daihongru
  */
-@Component
 public class ImageUtil {
     private static Logger logger = LoggerFactory.getLogger(ImageUtil.class);
 
@@ -26,8 +23,7 @@ public class ImageUtil {
      * @param path
      * @param imageHolder
      */
-    @Async
-    public void storageImage(String path, ImageHolder imageHolder) {
+    public static void storageImage(String path, ImageHolder imageHolder) {
         File targetFile = new File(PathUtil.getBasePath() + path);
         try {
             Thumbnails.of(imageHolder.getImage()).size(200, 200).outputQuality(0.9f).keepAspectRatio(false).toFile(targetFile);
