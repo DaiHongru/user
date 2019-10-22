@@ -1,4 +1,4 @@
-package com.freeowork.user.client.key;
+package com.freework.user.client.key;
 
 /**
  * @author daihongru

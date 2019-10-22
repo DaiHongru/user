@@ -5,7 +5,7 @@
 <mapper namespace="com.freework.user.dao.UserDao">
     <select id="login" resultType="com.freework.user.entity.User">
         SELECT
-        user_id, user_name, status, email, phone, password, img, education, school, situation, create_time, last_edit_time
+        user_id, user_name, sex, status, email, phone, password, img, education, school, situation, create_time, last_edit_time
         FROM
         tb_user
         WHERE
@@ -14,7 +14,7 @@
 
     <select id="query" resultType="com.freework.user.entity.User">
         SELECT
-        user_id, user_name, status, email, phone, password, img, education, school, situation, create_time,
+        user_id, user_name, sex, status, email, phone, password, img, education, school, situation, create_time,
         last_edit_time
         FROM
         tb_user
@@ -35,6 +35,7 @@
         INSERT INTO
         tb_user(
         user_name,
+        sex,
         status,
         email,
         phone,
@@ -44,6 +45,7 @@
         last_edit_time
         ) VALUES (
         #{userName},
+        #{sex},
         #{status},
         #{email},
         #{phone},

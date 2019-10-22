@@ -23,6 +23,11 @@ public class User {
     private String userName;
 
     /**
+     * 用户性别，不可为空
+     */
+    private String sex;
+
+    /**
      * 用户邮箱
      */
     private String email;
@@ -161,5 +166,13 @@ public class User {
 
     public void setLastEditTime(Date lastEditTime) {
         this.lastEditTime = lastEditTime;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }

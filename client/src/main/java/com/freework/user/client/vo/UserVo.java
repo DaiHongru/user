@@ -1,17 +1,12 @@
-package com.freeowork.user.client.vo;
+package com.freework.user.client.vo;
 
 
-import com.freework.cvitae.client.vo.CvitaeVo;
-import com.freework.cvitae.client.vo.EnterpriseCvVo;
-
-import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author daihongru
  */
-public class UserVo implements Serializable {
+public class UserVo {
     /**
      * 用户编号，自增主键，唯一标识符，不可为空，新增时不传入
      */
@@ -26,6 +21,11 @@ public class UserVo implements Serializable {
      * 用户姓名，不可为空
      */
     private String userName;
+
+    /**
+     * 用户性别，不可为空
+     */
+    private String sex;
 
     /**
      * 用户邮箱
@@ -68,19 +68,9 @@ public class UserVo implements Serializable {
     private Date createTime;
 
     /**
-     * 简历
-     */
-    private List<CvitaeVo> cvitaeVoList;
-
-    /**
      * 简历数量
      */
     private Integer cvitaeCount;
-
-    /**
-     * 简历投递情况
-     */
-    private List<EnterpriseCvVo> enterpriseCvVoList;
 
     /**
      * 投递的简历数量
@@ -88,7 +78,7 @@ public class UserVo implements Serializable {
     private Integer deliveryCvitaeCount;
 
     /**
-     * 投递的简历数量
+     * 通过的简历数量
      */
     private Integer passCvitaeCount;
 
@@ -193,24 +183,6 @@ public class UserVo implements Serializable {
         this.lastEditTime = lastEditTime;
     }
 
-    public List<CvitaeVo> getCvitaeVoList() {
-        return cvitaeVoList;
-    }
-
-    public void setCvitaeVoList(List<CvitaeVo> cvitaeVoList) {
-        this.cvitaeCount = cvitaeVoList.size();
-        this.cvitaeVoList = cvitaeVoList;
-    }
-
-    public List<EnterpriseCvVo> getEnterpriseCvVoList() {
-        return enterpriseCvVoList;
-    }
-
-    public void setEnterpriseCvVoList(List<EnterpriseCvVo> enterpriseCvVoList) {
-        this.deliveryCvitaeCount = enterpriseCvVoList.size();
-        this.enterpriseCvVoList = enterpriseCvVoList;
-    }
-
     public Integer getCvitaeCount() {
         return cvitaeCount;
     }
@@ -233,5 +205,13 @@ public class UserVo implements Serializable {
 
     public void setPassCvitaeCount(Integer passCvitaeCount) {
         this.passCvitaeCount = passCvitaeCount;
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = sex;
     }
 }

@@ -1,7 +1,5 @@
 package com.freework.user.service.impl;
 
-import com.freeowork.user.client.key.UserRedisKey;
-import com.freeowork.user.client.vo.UserVo;
 import com.freework.common.loadon.cache.JedisUtil;
 import com.freework.common.loadon.result.entity.ResultVo;
 import com.freework.common.loadon.result.enums.ResultStatusEnum;
@@ -11,8 +9,8 @@ import com.freework.common.loadon.util.FileUtil;
 import com.freework.common.loadon.util.JsonUtil;
 import com.freework.common.loadon.util.PathUtil;
 import com.freework.cvitae.client.feign.CvitaeClient;
-import com.freework.cvitae.client.vo.CvitaeVo;
-import com.freework.cvitae.client.vo.EnterpriseCvVo;
+import com.freework.user.client.key.UserRedisKey;
+import com.freework.user.client.vo.UserVo;
 import com.freework.user.dao.UserDao;
 import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
@@ -22,6 +20,8 @@ import com.freework.user.service.EmailService;
 import com.freework.user.service.SmsService;
 import com.freework.user.service.UserService;
 import com.freework.user.util.ImageUtil;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,6 @@ import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -74,6 +73,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @HystrixCommand(commandProperties = {
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"),
+            @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),
+            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "3"),
+            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
+            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")
+    })
     public ResultVo loginCheck(User user, int timeout, String oldToken) {
         if (user == null || user.getPassword() == null || user.getPhone() == null) {
             return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
@@ -97,10 +103,10 @@ public class UserServiceImpl implements UserService {
         }
         UserVo userVo = new UserVo();
         BeanUtils.copyProperties(u, userVo);
-        Map<String, Object> map = cvitaeClient.getUserCvitaeInfo(userVo.getUserId());
-        userVo.setCvitaeVoList((List<CvitaeVo>) map.get(CvitaeClient.CVITAE_VO_LIST_KEY));
-        userVo.setEnterpriseCvVoList((List<EnterpriseCvVo>) map.get(CvitaeClient.ENTERPRISE_CV_VO_LIST_KEY));
-        userVo.setPassCvitaeCount((Integer) map.get(CvitaeClient.PASS_CVITAE_COUNT_KEY));
+        Map<String, Integer> map = cvitaeClient.getUserCvitaeInfo(userVo.getUserId());
+        userVo.setCvitaeCount(map.get(CvitaeClient.CVITAE_COUNT_KEY));
+        userVo.setDeliveryCvitaeCount(map.get(CvitaeClient.ENTERPRISE_CV_COUNT_KEY));
+        userVo.setPassCvitaeCount(map.get(CvitaeClient.PASS_CVITAE_COUNT_KEY));
         String token = UUID.randomUUID().toString();
         String userKey = UserRedisKey.LOGIN_KEY + token;
         String userStr = JsonUtil.objectToJson(userVo);
