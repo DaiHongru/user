@@ -41,6 +41,7 @@
         phone,
         password,
         situation,
+        education,
         create_time,
         last_edit_time
         ) VALUES (
@@ -51,6 +52,7 @@
         #{phone},
         #{password},
         #{situation},
+        #{education},
         #{createTime},
         #{lastEditTime}
         )
