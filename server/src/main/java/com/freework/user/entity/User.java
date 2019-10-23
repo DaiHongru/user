@@ -13,7 +13,7 @@ public class User {
     private Integer userId;
 
     /**
-     * 用户状态，0为冻结，1为正常，不可为空，新增时可不传入，默认为0
+     * 用户状态，0为冻结，1为正常，不可为空，新增时可不传入，默认为1
      */
     private Integer status;
 

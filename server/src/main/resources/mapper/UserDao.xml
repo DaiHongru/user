@@ -93,4 +93,18 @@
         WHERE
         user_id=#{userId}
     </update>
+
+    <update id="updateData" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        user_name=#{userName},
+        sex=#{sex},
+        education=#{education},
+        school=#{school},
+        situation=#{situation},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        user_id=#{userId}
+    </update>
 </mapper>

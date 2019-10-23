@@ -114,6 +114,19 @@ public class UserController {
     }
 
     /**
+     * 修改用户个人资料
+     *
+     * @param user
+     * @param request
+     * @return
+     */
+    @PutMapping(value = "current/data")
+    public ResultVo updateData(@RequestBody User user, HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.updateData(user, token);
+    }
+
+    /**
      * 查询邮箱或手机号码是否存在
      * 如需要存在为false，如注册时查询，则需要传入不为空的inversion参数，即可置反
      *

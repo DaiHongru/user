@@ -56,4 +56,12 @@ public interface UserDao {
      * @return
      */
     int updateImg(User user);
+
+    /**
+     * 修改用户个人资料
+     *
+     * @param user
+     * @return
+     */
+    int updateData(User user);
 }

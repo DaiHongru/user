@@ -215,6 +215,38 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResultVo updateData(User user, String token) {
+        if (user == null) {
+            return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
+        }
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        user.setUserId(userVo.getUserId());
+        user.setLastEditTime(new Date());
+        try {
+            int judgeNum = userDao.updateData(user);
+            if (judgeNum <= 0) {
+                logger.error("修改用户个人信息失败失败");
+                throw new UserOperationException("修改用户个人信息失败失败");
+            }
+        } catch (Exception e) {
+            logger.error("修改用户个人信息失败异常:" + e.getMessage());
+            throw new UserOperationException("修改用户个人信息失败异常:" + e.getMessage());
+        }
+        userVo.setUserName(user.getUserName());
+        userVo.setSex(user.getSex());
+        userVo.setSituation(user.getSituation());
+        userVo.setEducation(user.getEducation());
+        userVo.setSchool(user.getSchool());
+        userVo.setLastEditTime(user.getLastEditTime());
+        setCurrentUserVo(userVo, userKey);
+        return ResultUtil.success();
+    }
+
+    @Override
     public ResultVo queryEmailOrPhoneExist(String email, String phone) {
         User user = new User();
         user.setPhone(phone);

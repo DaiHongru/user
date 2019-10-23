@@ -81,6 +81,15 @@ public interface UserService {
     ResultVo portraitUpload(ImageHolder imageHolder, String token);
 
     /**
+     * 修改用户个人资料
+     *
+     * @param user
+     * @param token
+     * @return
+     */
+    ResultVo updateData(User user, String token);
+
+    /**
      * 查询邮箱或手机号码是否存在
      *
      * @param email
