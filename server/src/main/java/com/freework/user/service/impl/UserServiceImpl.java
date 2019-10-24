@@ -131,6 +131,7 @@ public class UserServiceImpl implements UserService {
             return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
         }
         user.setStatus(UserStateEnum.PASS.getState());
+        user.setEmailStatus(UserStateEnum.CHECKING.getState());
         user.setPassword(DesUtil.getEncryptString(user.getPassword()));
         user.setCreateTime(new Date());
         user.setLastEditTime(new Date());
@@ -244,6 +245,84 @@ public class UserServiceImpl implements UserService {
         userVo.setLastEditTime(user.getLastEditTime());
         setCurrentUserVo(userVo, userKey);
         return ResultUtil.success();
+    }
+
+    @Override
+    public ResultVo updatePhone(String newPhone, String token) {
+        if (StringUtils.isEmpty(newPhone)) {
+            return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
+        }
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        userVo.setPhone(newPhone);
+        userVo.setLastEditTime(new Date());
+        User user = new User();
+        BeanUtils.copyProperties(userVo, user);
+        try {
+            int judgeNum = userDao.updatePhone(user);
+            if (judgeNum <= 0) {
+                throw new UserOperationException("修改绑定手机失败");
+            }
+        } catch (Exception e) {
+            throw new UserOperationException("修改绑定手机时发生异常:" + e.getMessage());
+        }
+        return logout(token);
+    }
+
+    @Override
+    public ResultVo updateEmail(String newEmail, String token) {
+        if (StringUtils.isEmpty(newEmail)) {
+            return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
+        }
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        userVo.setEmail(newEmail);
+        userVo.setEmailStatus(UserStateEnum.CHECKING.getState());
+        userVo.setLastEditTime(new Date());
+        User user = new User();
+        BeanUtils.copyProperties(userVo, user);
+        try {
+            int judgeNum = userDao.updateEmail(user);
+            if (judgeNum <= 0) {
+                throw new UserOperationException("修改失败");
+            }
+        } catch (Exception e) {
+            throw new UserOperationException("修改绑定邮箱时发生异常:" + e.getMessage());
+        }
+        emailService.sendActivatedMail(user);
+        setCurrentUserVo(userVo, userKey);
+        return ResultUtil.success();
+    }
+
+    @Override
+    public ResultVo updatePassword(String newPassword, String token) {
+        if (StringUtils.isEmpty(newPassword)) {
+            return ResultUtil.error(ResultStatusEnum.BAD_REQUEST);
+        }
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        userVo.setLastEditTime(new Date());
+        User user = new User();
+        BeanUtils.copyProperties(userVo, user);
+        user.setPassword(DesUtil.getEncryptString(newPassword));
+        try {
+            int judgeNum = userDao.updatePassword(user);
+            if (judgeNum <= 0) {
+                throw new UserOperationException("修改失败");
+            }
+        } catch (Exception e) {
+            throw new UserOperationException("修改密码时发生异常:" + e.getMessage());
+        }
+        return logout(token);
     }
 
     @Override

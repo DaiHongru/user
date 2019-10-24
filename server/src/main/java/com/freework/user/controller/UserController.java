@@ -127,6 +127,40 @@ public class UserController {
     }
 
     /**
+     * 修改绑定手机
+     *
+     * @return
+     */
+    @PutMapping(value = "current/phone")
+    public ResultVo updatePhone(String newPhone, HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.updatePhone(newPhone, token);
+    }
+
+    /**
+     * 修改绑定邮箱
+     *
+     * @return
+     */
+    @PutMapping(value = "current/email")
+    public ResultVo updateEmail(String newEmail, HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.updateEmail(newEmail, token);
+    }
+
+    /**
+     * 修改登陆密码
+     *
+     * @return
+     */
+    @PutMapping(value = "current/password")
+    public ResultVo updatePassword(String newPassword, HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.updatePassword(newPassword, token);
+    }
+
+
+    /**
      * 查询邮箱或手机号码是否存在
      * 如需要存在为false，如注册时查询，则需要传入不为空的inversion参数，即可置反
      *
@@ -225,19 +259,4 @@ public class UserController {
             return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
         }
     }
-
-
-//    /**
-//     * 企业logo上传
-//     *
-//     * @return
-//     */
-//    @PostMapping(value = "current/logo")
-//    public ResultVo logoUpload(MultipartHttpServletRequest request) throws IOException {
-//        MultipartFile logo =  request.getFile("logo");
-//        ImageHolder imageHolder = new ImageHolder(logo.getOriginalFilename(), logo.getInputStream());
-//        String token = request.getHeader("etoken");
-//        return enterpriseService.logoUpload(imageHolder, token);
-//    }
-
 }

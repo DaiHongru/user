@@ -33,6 +33,11 @@ public class UserVo {
     private String email;
 
     /**
+     * 邮箱状态，0为待验证，1为正常，默认为0
+     */
+    private Integer emailStatus;
+
+    /**
      * 用户密码，不可为空
      */
     private String password;
@@ -213,5 +218,13 @@ public class UserVo {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    public Integer getEmailStatus() {
+        return emailStatus;
+    }
+
+    public void setEmailStatus(Integer emailStatus) {
+        this.emailStatus = emailStatus;
     }
 }

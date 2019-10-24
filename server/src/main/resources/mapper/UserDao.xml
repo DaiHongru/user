@@ -5,7 +5,8 @@
 <mapper namespace="com.freework.user.dao.UserDao">
     <select id="login" resultType="com.freework.user.entity.User">
         SELECT
-        user_id, user_name, sex, status, email, phone, password, img, education, school, situation, create_time, last_edit_time
+        user_id, user_name, sex, status, email, email_status, phone, password, img, education, school, situation,
+        create_time, last_edit_time
         FROM
         tb_user
         WHERE
@@ -14,8 +15,8 @@
 
     <select id="query" resultType="com.freework.user.entity.User">
         SELECT
-        user_id, user_name, sex, status, email, phone, password, img, education, school, situation, create_time,
-        last_edit_time
+        user_id, user_name, sex, status, email, email_status, phone, password, img, education, school, situation,
+        create_time, last_edit_time
         FROM
         tb_user
         <where>
@@ -38,6 +39,7 @@
         sex,
         status,
         email,
+        email_status,
         phone,
         password,
         situation,
@@ -49,6 +51,7 @@
         #{sex},
         #{status},
         #{email},
+        #{emailStatus},
         #{phone},
         #{password},
         #{situation},
@@ -103,6 +106,26 @@
         education=#{education},
         school=#{school},
         situation=#{situation},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        user_id=#{userId}
+    </update>
+
+    <update id="updatePhone" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        phone = #{phone},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        user_id=#{userId}
+    </update>
+
+    <update id="updateEmail" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        email = #{email},
         last_edit_time=#{lastEditTime}
         WHERE
         user_id=#{userId}

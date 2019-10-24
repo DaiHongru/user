@@ -64,4 +64,20 @@ public interface UserDao {
      * @return
      */
     int updateData(User user);
+
+    /**
+     * 修改绑定手机
+     *
+     * @param user
+     * @return
+     */
+    int updatePhone(User user);
+
+    /**
+     * 修改绑定手机
+     *
+     * @param user
+     * @return
+     */
+    int updateEmail(User user);
 }

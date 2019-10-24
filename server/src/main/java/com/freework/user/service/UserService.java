@@ -90,6 +90,33 @@ public interface UserService {
     ResultVo updateData(User user, String token);
 
     /**
+     * 修改绑定手机
+     *
+     * @param newPhone
+     * @param token
+     * @return
+     */
+    ResultVo updatePhone(String newPhone, String token);
+
+    /**
+     * 修改绑定邮箱
+     *
+     * @param newEmail
+     * @param token
+     * @return
+     */
+    ResultVo updateEmail(String newEmail, String token);
+
+    /**
+     * 修改企业登录密码
+     *
+     * @param newPassword
+     * @param token
+     * @return
+     */
+    ResultVo updatePassword(String newPassword, String token);
+
+    /**
      * 查询邮箱或手机号码是否存在
      *
      * @param email
