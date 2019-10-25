@@ -29,6 +29,22 @@ public interface UserService {
     ResultVo getCurrentUserInfo(String token);
 
     /**
+     * 获取当前登录用户的消息
+     *
+     * @param token
+     * @return
+     */
+    ResultVo getCurrentUserNews(String token);
+
+    /**
+     * 修改消息为已读状态
+     *
+     * @param token
+     * @param newsId
+     */
+    void updateNewsStatus(String token, Integer newsId);
+
+    /**
      * utoken自动登录
      *
      * @param token

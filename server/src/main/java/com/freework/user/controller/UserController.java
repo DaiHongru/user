@@ -35,9 +35,32 @@ public class UserController {
      * @return
      */
     @GetMapping(value = "current/info")
-    public ResultVo getCurrentEnterpriseInfo(HttpServletRequest request) {
+    public ResultVo getCurrentUserInfo(HttpServletRequest request) {
         String token = request.getHeader("utoken");
         return userService.getCurrentUserInfo(token);
+    }
+
+    /**
+     * 获取当前登录用户的消息
+     *
+     * @return
+     */
+    @GetMapping(value = "current/news")
+    public ResultVo getCurrentUserNews(HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        return userService.getCurrentUserNews(token);
+    }
+
+    /**
+     * 修改消息为已读状态
+     *
+     * @param newsId
+     * @param request
+     */
+    @PutMapping(value = "current/news/{newsId}")
+    public void updateNewsStatus(@PathVariable Integer newsId, HttpServletRequest request) {
+        String token = request.getHeader("utoken");
+        userService.updateNewsStatus(token, newsId);
     }
 
     /**

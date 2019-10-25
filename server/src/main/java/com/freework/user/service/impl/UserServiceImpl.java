@@ -1,6 +1,8 @@
 package com.freework.user.service.impl;
 
 import com.freework.common.loadon.cache.JedisUtil;
+import com.freework.common.loadon.entity.News;
+import com.freework.common.loadon.enums.NewsStateEnum;
 import com.freework.common.loadon.result.entity.ResultVo;
 import com.freework.common.loadon.result.enums.ResultStatusEnum;
 import com.freework.common.loadon.result.util.ResultUtil;
@@ -11,6 +13,7 @@ import com.freework.common.loadon.util.PathUtil;
 import com.freework.cvitae.client.feign.CvitaeClient;
 import com.freework.user.client.key.UserRedisKey;
 import com.freework.user.client.vo.UserVo;
+import com.freework.user.dao.NewsDao;
 import com.freework.user.dao.UserDao;
 import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
@@ -27,10 +30,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -42,6 +47,8 @@ public class UserServiceImpl implements UserService {
     private static Logger logger = LoggerFactory.getLogger(UserServiceImpl.class);
     @Autowired(required = false)
     private UserDao userDao;
+    @Autowired(required = false)
+    private NewsDao newsDao;
     @Autowired(required = false)
     private JedisUtil.Keys jedisKeys;
     @Autowired(required = false)
@@ -63,6 +70,39 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public ResultVo getCurrentUserNews(String token) {
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (!jedisKeys.exists(userKey)) {
+            return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        UserVo userVo = getCurrentUserVo(userKey);
+        News news = new News();
+        news.setOwnerType(NewsStateEnum.NEWS_TYPE_USER);
+        news.setOwnerId(userVo.getUserId());
+        List<News> newsList = newsDao.queryByRequirement(news);
+        if (newsList == null || newsList.size() <= 0) {
+            return ResultUtil.error(ResultStatusEnum.NOT_FOUND);
+        }
+        return ResultUtil.success(newsList);
+    }
+
+    @Override
+    @Async
+    public void updateNewsStatus(String token, Integer newsId) {
+        String userKey = UserRedisKey.LOGIN_KEY + token;
+        if (jedisKeys.exists(userKey)) {
+            UserVo userVo = getCurrentUserVo(userKey);
+            News news = new News();
+            news.setNewsId(newsId);
+            news.setOwnerType(NewsStateEnum.NEWS_TYPE_USER);
+            news.setOwnerId(userVo.getUserId());
+            news.setStatus(NewsStateEnum.READ.getState());
+            news.setLastEditTime(new Date());
+            newsDao.update(news);
+        }
+    }
+
+    @Override
     public ResultVo utokenLogin(String token) {
         String key = UserRedisKey.LOGIN_KEY + token;
         if (!jedisKeys.exists(key)) {
@@ -74,11 +114,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @HystrixCommand(commandProperties = {
-            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "1000"),
-            @HystrixProperty(name = "circuitBreaker.enabled", value = "true"),
-            @HystrixProperty(name = "circuitBreaker.requestVolumeThreshold", value = "3"),
-            @HystrixProperty(name = "circuitBreaker.sleepWindowInMilliseconds", value = "5000"),
-            @HystrixProperty(name = "circuitBreaker.errorThresholdPercentage", value = "60")
+            @HystrixProperty(name = "execution.isolation.thread.timeoutInMilliseconds", value = "3000")
     })
     public ResultVo loginCheck(User user, int timeout, String oldToken) {
         if (user == null || user.getPassword() == null || user.getPhone() == null) {
