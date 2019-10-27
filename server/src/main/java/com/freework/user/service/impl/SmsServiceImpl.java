@@ -65,7 +65,7 @@ public class SmsServiceImpl implements SmsService {
         smsVo.setCode(code);
         smsVo.autoSetMessageId();
         MessageLog messageLog = new MessageLog();
-        messageLog.setTag("SMS");
+        messageLog.setTag("UserSMS");
         messageLog.setMessageId(smsVo.getMessageId());
         try {
             messageLog.setMessage(JsonUtil.objectToJson(smsVo));

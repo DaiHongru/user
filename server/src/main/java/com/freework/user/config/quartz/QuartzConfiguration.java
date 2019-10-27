@@ -21,8 +21,8 @@ public class QuartzConfiguration {
      * @return
      */
     @Bean
-    public JobDetail checkMessageAboutSmsJobDetail() {
-        return JobBuilder.newJob(MessageLogJob.class).withIdentity("SmsJobDetail", "Sms").storeDurably().build();
+    public JobDetail checkMessageJobDetail() {
+        return JobBuilder.newJob(MessageLogJob.class).withIdentity("MessageJobDetail", "Message").storeDurably().build();
     }
 
     /**
@@ -33,11 +33,11 @@ public class QuartzConfiguration {
      * @return
      */
     @Bean
-    public Trigger checkMessageAboutSmsTrigger() {
+    public Trigger checkMessageTrigger() {
         logger.info("定时MessageLogJob任务开启，每隔2分钟检查一次投递失败的消息");
         CronScheduleBuilder scheduleBuilder = CronScheduleBuilder.cronSchedule("0 0/2 * * * ?");
-        return TriggerBuilder.newTrigger().forJob(checkMessageAboutSmsJobDetail())
-                .withIdentity("SmsJobTrigger", "Sms")
+        return TriggerBuilder.newTrigger().forJob(checkMessageJobDetail())
+                .withIdentity("MessageJobTrigger", "Message")
                 .withSchedule(scheduleBuilder)
                 .build();
     }

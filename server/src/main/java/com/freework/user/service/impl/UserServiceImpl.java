@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -359,6 +360,39 @@ public class UserServiceImpl implements UserService {
             throw new UserOperationException("修改密码时发生异常:" + e.getMessage());
         }
         return logout(token);
+    }
+
+    @Override
+    public ResultVo checkActivationEmailAddress(Integer userId, String code, HttpServletRequest request) {
+        String key = USER_EMAIL_ACTIVATION_CODE_KEY + "_Id_" + userId;
+        if (jedisKeys.exists(key)) {
+            if (code.equals(jedisStrings.get(key))) {
+                jedisKeys.del(key);
+                User user = new User();
+                user.setUserId(userId);
+                user.setEmailStatus(UserStateEnum.PASS.getState());
+                user.setLastEditTime(new Date());
+                try {
+                    int judgeNum = userDao.updateEmailStatus(user);
+                    if (judgeNum <= 0) {
+                        throw new UserOperationException("修改失败");
+                    }
+                } catch (Exception e) {
+                    throw new UserOperationException("修改邮箱状态异常:" + e.getMessage());
+                }
+                String token = request.getHeader("utoken");
+                if (StringUtils.isNotEmpty(token)) {
+                    String userKey = UserRedisKey.LOGIN_KEY + token;
+                    if (jedisKeys.exists(userKey)) {
+                        UserVo userVo = getCurrentUserVo(userKey);
+                        userVo.setEmailStatus(UserStateEnum.PASS.getState());
+                        setCurrentUserVo(userVo, userKey);
+                    }
+                }
+                return ResultUtil.success();
+            }
+        }
+        return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
     }
 
     @Override

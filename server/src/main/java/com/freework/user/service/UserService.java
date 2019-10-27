@@ -5,6 +5,8 @@ import com.freework.user.dto.ImageHolder;
 import com.freework.user.entity.User;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author daihongru
  */
@@ -131,6 +133,16 @@ public interface UserService {
      * @return
      */
     ResultVo updatePassword(String newPassword, String token);
+
+    /**
+     * 验证邮箱激活码正确性
+     *
+     * @param userId
+     * @param code
+     * @param request
+     * @return
+     */
+    ResultVo checkActivationEmailAddress(Integer userId, String code, HttpServletRequest request);
 
     /**
      * 查询邮箱或手机号码是否存在

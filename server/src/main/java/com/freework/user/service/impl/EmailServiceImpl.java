@@ -77,24 +77,15 @@ public class EmailServiceImpl implements EmailService {
         emailVo.setHtmlText(htmlText);
         emailVo.autoSetMessageId();
         MessageLog messageLog = new MessageLog();
-        messageLog.setTag("Email");
+        messageLog.setTag("UserEmail");
         messageLog.setMessageId(emailVo.getMessageId());
-        try {
-            messageLog.setMessage(JsonUtil.objectToJson(emailVo));
-        } catch (Exception e) {
-            logger.error("将Sms对象转为JSON时异常：" + e.getMessage());
-        }
+        messageLog.setMessage(JsonUtil.objectToJson(emailVo));
         messageLog.setTryCount(1);
         messageLog.setStatus(MessageLogStateEnum.SENDING.getState());
         messageLog.setNextRetryTime(DateUtil.getLaterTimeMinute(1));
         messageLog.setCreateTime(new Date());
         messageLog.setLastEditTime(new Date());
-        String jsonString = null;
-        try {
-            jsonString = JsonUtil.objectToJson(messageLog);
-        } catch (Exception e) {
-            logger.error("messageLog：" + e.getMessage());
-        }
+        String jsonString = JsonUtil.objectToJson(messageLog);
         String messageLogKey = MessageLogService.MESSAGELOG_EMAIL_KEY + "_" + messageLog.getMessageId();
         jedisStrings.set(messageLogKey, jsonString);
         emailSender.send(emailVo);

@@ -182,6 +182,20 @@ public class UserController {
         return userService.updatePassword(newPassword, token);
     }
 
+    /**
+     * 验证邮箱激活码正确性，正确则将邮箱状态修改为1
+     * 如果当前已登录，则更新redis中的状态
+     *
+     * @param request
+     * @return
+     */
+    @PutMapping(value = "email/{userId}/{code}")
+    public ResultVo checkActivationEmailAddress(@PathVariable Integer userId,
+                                                @PathVariable String code,
+                                                HttpServletRequest request) {
+        return userService.checkActivationEmailAddress(userId, code, request);
+    }
+
 
     /**
      * 查询邮箱或手机号码是否存在

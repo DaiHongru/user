@@ -80,4 +80,12 @@ public interface UserDao {
      * @return
      */
     int updateEmail(User user);
+
+    /**
+     * 修改邮箱状态
+     *
+     * @param user
+     * @return
+     */
+    int updateEmailStatus(User user);
 }

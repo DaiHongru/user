@@ -130,4 +130,14 @@
         WHERE
         user_id=#{userId}
     </update>
+
+    <update id="updateEmailStatus" parameterType="com.freework.user.entity.User">
+        UPDATE
+        tb_user
+        SET
+        email_status = #{emailStatus},
+        last_edit_time=#{lastEditTime}
+        WHERE
+        user_id=#{userId}
+    </update>
 </mapper>
