@@ -45,10 +45,12 @@ public class UserController {
      *
      * @return
      */
-    @GetMapping(value = "current/news")
-    public ResultVo getCurrentUserNews(HttpServletRequest request) {
+    @GetMapping(value = "current/news/{pageNum}/{pageSize}")
+    public ResultVo getCurrentUserNews(HttpServletRequest request,
+                                       @PathVariable Integer pageNum,
+                                       @PathVariable Integer pageSize) {
         String token = request.getHeader("utoken");
-        return userService.getCurrentUserNews(token);
+        return userService.getCurrentUserNews(token, pageNum, pageSize);
     }
 
     /**

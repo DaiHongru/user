@@ -34,9 +34,11 @@ public interface UserService {
      * 获取当前登录用户的消息
      *
      * @param token
+     * @param pageNum
+     * @param pageSize
      * @return
      */
-    ResultVo getCurrentUserNews(String token);
+    ResultVo getCurrentUserNews(String token, Integer pageNum, Integer pageSize);
 
     /**
      * 修改消息为已读状态

@@ -23,6 +23,7 @@ import com.freework.user.service.EmailService;
 import com.freework.user.service.SmsService;
 import com.freework.user.service.UserService;
 import com.freework.user.util.ImageUtil;
+import com.github.pagehelper.PageHelper;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.apache.commons.lang.StringUtils;
@@ -71,10 +72,13 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public ResultVo getCurrentUserNews(String token) {
+    public ResultVo getCurrentUserNews(String token, Integer pageNum, Integer pageSize) {
         String userKey = UserRedisKey.LOGIN_KEY + token;
         if (!jedisKeys.exists(userKey)) {
             return ResultUtil.error(ResultStatusEnum.UNAUTHORIZED);
+        }
+        if (pageNum != 0 || pageSize != 0) {
+            PageHelper.startPage(pageNum, pageSize);
         }
         UserVo userVo = getCurrentUserVo(userKey);
         News news = new News();
