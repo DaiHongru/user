@@ -2,6 +2,7 @@ package com.freework.user.config.redis;
 
 import com.freework.common.loadon.cache.JedisPoolWriper;
 import com.freework.common.loadon.cache.JedisUtil;
+import com.freework.common.loadon.util.DesUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,6 +20,8 @@ public class RedisConfiguration {
     private String hostname;
     @Value("${redis.port}")
     private int port;
+    @Value("${redis.password}")
+    private String password;
     @Value("${redis.pool.maxActive}")
     private int maxTotal;
     @Value("${redis.pool.maxIdle}")
@@ -72,7 +75,7 @@ public class RedisConfiguration {
      */
     @Bean(name = "jedisWritePool")
     public JedisPoolWriper createJedisPoolWriper() {
-        JedisPoolWriper jedisPoolWriper = new JedisPoolWriper(jedisPoolConfig, hostname, port);
+        JedisPoolWriper jedisPoolWriper = new JedisPoolWriper(jedisPoolConfig, hostname, port, DesUtil.getDecryptString(password));
         return jedisPoolWriper;
     }
 
